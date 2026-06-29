@@ -1598,16 +1598,12 @@ function mergeSharePointItems(items, token, siteId, listId) {
     var existing = existingById[spId];
 
     var status = (existing && existing.status !== 'pending') ? existing.status : ((f.Status || f.StatusValue || 'pending').toLowerCase());
-    var ntid = (f['What_x0020_is_x0020_your_x0020_NTID'] || f.WhatisyourNTID || f.NTID || '').trim().toLowerCase();
+    var ntid = (f['field_7'] || f['What_x0020_is_x0020_your_x0020_NTID'] || f.WhatisyourNTID || f.NTID || '').trim().toLowerCase();
     var coach = NTID_COACH[ntid] || 'Unknown';
 
     // Try all possible encodings for Employee Full Name
-    var empName = f['Employee_x0020_Full_x0020_Name_x003a__x0020__x0028_First_x0020_and_x0020_Last_x0020_Name_x0029_'] ||
-                  f['EmployeeFullName'] ||
-                  f['Employee Full Name: (First and Last Name)'] || '';
-    // Use Title only if it's not an Excel serial number
+    var empName = f['field_6'] || f['Employee_x0020_Full_x0020_Name_x003a__x0020__x0028_First_x0020_and_x0020_Last_x0020_Name_x0029_'] || f.EmployeeFullName || '';
     if (!empName && f.Title && !/^\d{4,}/.test(String(f.Title).trim())) empName = f.Title;
-    // Skip rows that have no recognizable name
     if (!empName) empName = f.Title || 'Unknown';
 
     return {
@@ -1616,20 +1612,20 @@ function mergeSharePointItems(items, token, siteId, listId) {
       spSiteId: siteId,
       spListId: listId,
       employeeName: empName,
-      ntid: (f['What_x0020_is_x0020_your_x0020_NTID'] || f.NTID || '').trim(),
-      employeeEmail: f['Employee_x0020_Email_x0020_Address_x0020__x0028_Employee_x0020_will_x0020_be_x0020_sent_x0020_an_x0020_email_x0020_if_x0020_there_x0020_is_x0020_a_x0020_d_x2026__x0029_'] || f.EmployeeEmailAddress || '',
+      ntid: (f['field_7'] || f['What_x0020_is_x0020_your_x0020_NTID'] || f.NTID || '').trim(),
+      employeeEmail: f['field_8'] || f['Employee_x0020_Email_x0020_Address_x0020__x0028_Employee_x0020_will_x0020_be_x0020_sent_x0020_an_x0020_email_x0020_if_x0020_there_x0020_is_x0020_a_x0020_d_x2026__x0029_'] || '',
       coach: coach,
-      location: f['Location_x0020_you_x0020_worked_x0020_at_x0020_needing_x0020_adjustment_x0020__x0028_will_x0020_be_x0020_verified_x0020_via_x0020_camer_x2026__x0029_'] || f.Location || '',
-      dateNeeded: f['Date_x0020_adjustment_x0020_is_x0020_needed_x0020_for_x003a_'] || f.Dateadjustmentisneededfor || '',
-      reason: f['Reason_x0020_For_x0020_Time_x0020_Adjustment'] || f.ReasonForTimeAdjustment || '',
-      clockIn: f['Clock_x0020_In_x0020_Time_x003f__x0020__x0028_will_x0020_be_x0020_verified_x0020_via_x0020_cameras_x0020_before_x0020_approved_x0029_'] || f.ClockInTime || '',
-      lunchOut: f['What_x0020_Time_x0020_did_x0020_you_x0020_go_x0020_to_x0020_lunch_x003f_'] || f.WhatTimedidyougotolunch || '',
-      lunchIn: f['What_x0020_Time_x0020_did_x0020_you_x0020_Return_x0020_From_x0020_Lunch_x003f_'] || f.WhatTimedidyouReturnFromLunch || '',
-      clockOut: f['Clock_x0020_Out_x0020_Time_x003f__x0020__x0028_will_x0020_be_x0020_verified_x0020_via_x0020_cameras_x0020_before_x0020_approved_x0029_'] || f.ClockOutTime || '',
-      internetIssue: f['Did_x0020_you_x0020_report_x0020_the_x0020_internet_x0020_issue_x0020_to_x0020_Management_x003f_'] || f.DidyoureporttheinternetissuetoManagement || '',
-      yubiIssue: f['Did_x0020_you_x0020_inform_x0020_management_x0020_there_x0020_is_x0020_an_x0020_issue_x0020_with_x0020_your_x0020_Yubi_x0020_Key_x003f_'] || f.DidyouinformmanagementthereisanissuewithyourYubiKey || '',
-      reportedTo: f['Who_x0020_in_x0020_management_x0020_did_x0020_you_x0020_report_x0020_the_x0020_issue_x0020_to_x003f_'] || f.WhoinmanagementdidyoureporttheissueTo || '',
-      notes: f['Notes_x003a_'] || f.Notes || '',
+      location: f['field_9'] || f['Location_x0020_you_x0020_worked_x0020_at_x0020_needing_x0020_adjustment_x0020__x0028_will_x0020_be_x0020_verified_x0020_via_x0020_camer_x2026__x0029_'] || '',
+      dateNeeded: f['Dateadjustmentisneededfor_x003a_'] || f['Date_x0020_adjustment_x0020_is_x0020_needed_x0020_for_x003a_'] || '',
+      reason: f['field_11'] || f['Reason_x0020_For_x0020_Time_x0020_Adjustment'] || '',
+      clockIn: f['field_15'] || f['Clock_x0020_In_x0020_Time_x003f__x0020__x0028_will_x0020_be_x0020_verified_x0020_via_x0020_cameras_x0020_before_x0020_approved_x0029_'] || '',
+      lunchOut: f['field_16'] || f['What_x0020_Time_x0020_did_x0020_you_x0020_go_x0020_to_x0020_lunch_x003f_'] || '',
+      lunchIn: f['field_17'] || f['What_x0020_Time_x0020_did_x0020_you_x0020_Return_x0020_From_x0020_Lunch_x003f_'] || '',
+      clockOut: f['field_18'] || f['Clock_x0020_Out_x0020_Time_x003f__x0020__x0028_will_x0020_be_x0020_verified_x0020_via_x0020_cameras_x0020_before_x0020_approved_x0029_'] || '',
+      internetIssue: f['field_12'] || f['Did_x0020_you_x0020_report_x0020_the_x0020_internet_x0020_issue_x0020_to_x0020_Management_x003f_'] || '',
+      yubiIssue: f['field_13'] || f['Did_x0020_you_x0020_inform_x0020_management_x0020_there_x0020_is_x0020_an_x0020_issue_x0020_with_x0020_your_x0020_Yubi_x0020_Key_x003f_'] || '',
+      reportedTo: f['field_14'] || f['Who_x0020_in_x0020_management_x0020_did_x0020_you_x0020_report_x0020_the_x0020_issue_x0020_to_x003f_'] || '',
+      notes: f['field_19'] || f['Notes_x003a_'] || f.Notes || '',
       status: status,
       submittedAt: item.createdDateTime || new Date().toISOString(),
       actionedAt: existing ? existing.actionedAt : null,
