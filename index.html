@@ -1592,6 +1592,7 @@ function mergeSharePointItems(items, token, siteId, listId) {
   if (items.length > 0) {
     console.log('DEBUG - First item fields:', JSON.stringify(items[0].fields));
   }
+  var merged = items.map(function(item) {
     var f = item.fields || {};
     var spId = item.id;
     var existing = existingById[spId];
