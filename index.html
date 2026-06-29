@@ -1556,15 +1556,20 @@ function fetchFromSharePoint() {
           if (!site.id) { setSyncStatus('error', 'Could not resolve SharePoint site'); return; }
           var siteId = site.id;
           // Get list
-          var listUrl = 'https://graph.microsoft.com/v1.0/sites/' + siteId + '/lists?$filter=displayName eq \'' + encodeURIComponent(state.config.listName) + '\'&$select=id,displayName';
+          var listUrl = 'https://graph.microsoft.com/v1.0/sites/' + siteId + '/lists?$select=id,displayName';
           return fetch(listUrl, { headers: { 'Authorization': 'Bearer ' + token } })
             .then(function(r) { return r.json(); })
             .then(function(lists) {
-              if (!lists.value || !lists.value.length) { setSyncStatus('error', 'List "' + state.config.listName + '" not found'); return; }
-              var listId = lists.value[0].id;
+              if (!lists.value || !lists.value.length) { setSyncStatus('error', 'No lists found on site'); return; }
+              var matched = null;
+              for (var i = 0; i < lists.value.length; i++) {
+                if (lists.value[i].displayName === state.config.listName) { matched = lists.value[i]; break; }
+              }
+              if (!matched) { setSyncStatus('error', 'List "' + state.config.listName + '" not found'); return; }
+              var listId = matched.id;
               // Fetch all items — paginate up to 999
               var itemsUrl = 'https://graph.microsoft.com/v1.0/sites/' + siteId + '/lists/' + listId +
-                '/items?expand=fields&$top=999&$orderby=fields/Created desc';
+                '/items?expand=fields&$top=999';
               return fetch(itemsUrl, { headers: { 'Authorization': 'Bearer ' + token } })
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
