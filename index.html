@@ -1589,7 +1589,9 @@ function mergeSharePointItems(items, token, siteId, listId) {
   var existingById = {};
   state.submissions.forEach(function(s) { if (s.spId) existingById[s.spId] = s; });
 
-  var merged = items.map(function(item) {
+  if (items.length > 0) {
+    console.log('DEBUG - First item fields:', JSON.stringify(items[0].fields));
+  }
     var f = item.fields || {};
     var spId = item.id;
     var existing = existingById[spId];
