@@ -902,6 +902,23 @@
   @keyframes countUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
   .home-stat-number { animation: countUp 0.5s ease forwards; }
 
+  /* BACKSHEET TAB */
+  .backsheet-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .backsheet-table thead tr { background: var(--purple); }
+  .backsheet-table thead th { padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); }
+  .backsheet-table tbody tr { border-bottom: 1px solid var(--border); }
+  .backsheet-table tbody tr:hover { background: #faf5ff; }
+  .backsheet-table tbody td { padding: 10px 14px; font-size: 13px; }
+  .backsheet-table input { width: 100%; border: 1px solid transparent; border-radius: 4px; padding: 4px 8px; font-family: 'Montserrat', sans-serif; font-size: 12px; background: transparent; outline: none; }
+  .backsheet-table input:focus { border-color: var(--magenta); background: white; }
+  .backsheet-table select { width: 100%; border: 1px solid transparent; border-radius: 4px; padding: 4px 8px; font-family: 'Montserrat', sans-serif; font-size: 12px; background: transparent; outline: none; }
+  .backsheet-table select:focus { border-color: var(--magenta); background: white; }
+  .bs-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+  .bs-tag.tbd { background: #fef3c7; color: #92400e; }
+  .bs-tag.ok { background: #d1fae5; color: #065f46; }
+  .bs-save-btn { background: var(--magenta); color: white; border: none; padding: 8px 20px; border-radius: 6px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; letter-spacing: 1px; }
+  .bs-save-btn:hover { background: #c4005f; }
+
   @media (max-width: 900px) {
     .home-stats-row { grid-template-columns: repeat(2,1fr); }
     .home-body { grid-template-columns: 1fr; }
@@ -940,6 +957,7 @@
     <div class="nav-tab" onclick="switchTab('excessive')" id="tab-excessive">⚠️ Excessive <span class="badge warn" id="badge-excessive">0</span></div>
     <div class="nav-tab" onclick="switchTab('history')" id="tab-history">History</div>
     <div class="nav-tab" onclick="switchTab('hours')" id="tab-hours">Hours / Punches <span class="badge" id="badge-auto" style="background:var(--denied);display:none;">0</span></div>
+    <div class="nav-tab" onclick="switchTab('backsheet')" id="tab-backsheet">📋 Contacts</div>
     <div class="nav-tab" onclick="switchTab('admin')" id="tab-admin">Admin / Settings</div>
   </div>
 
@@ -1291,6 +1309,32 @@
       </div>
     </div>
 
+    <!-- BACKSHEET TAB -->
+    <div class="tab-content" id="content-backsheet">
+      <div class="section-header">
+        <div class="section-title">📋 Coach & Manager Contacts</div>
+        <div class="section-actions">
+          <button class="bs-save-btn" onclick="saveBacksheet()">💾 Save Changes</button>
+        </div>
+      </div>
+
+      <div class="admin-card" style="margin-bottom:20px;">
+        <h3>Coaches</h3>
+        <table class="backsheet-table" id="coach-table">
+          <thead><tr><th>Coach Name</th><th>Email</th><th>Status</th></tr></thead>
+          <tbody id="coach-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="admin-card">
+        <h3>Store Managers</h3>
+        <table class="backsheet-table" id="manager-table">
+          <thead><tr><th>Store</th><th>Type</th><th>Manager</th><th>Phone</th><th>Email</th><th>Status</th></tr></thead>
+          <tbody id="manager-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- ADMIN TAB -->
     <div class="tab-content" id="content-admin">
       <div class="msal-setup" id="setup-notice" style="display:none;">
@@ -1411,7 +1455,21 @@
 <div class="modal-overlay" id="deny-modal">
   <div class="modal">
     <h3>Deny Time Adjustment</h3>
-    <p>Provide a reason for denial. This will be sent to the employee's email and logged in the system.</p>
+    <p>Provide a reason for denial. Both the coach and manager will be notified.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);display:block;margin-bottom:6px;">Notify Coach</label>
+        <select id="deny-coach-select" style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;outline:none;">
+          <option value="">— Select Coach —</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);display:block;margin-bottom:6px;">Notify Manager</label>
+        <select id="deny-manager-select" style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-family:'Montserrat',sans-serif;font-size:12px;outline:none;">
+          <option value="">— Select Manager —</option>
+        </select>
+      </div>
+    </div>
     <textarea id="deny-reason" placeholder="e.g. Camera footage does not confirm the reported clock-in time..."></textarea>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeDenyModal()" style="flex:1;">Cancel</button>
@@ -1521,7 +1579,7 @@ function doLogout() {
 // TAB SWITCHING
 // ============================================================
 function switchTab(tab) {
-  var tabs = ['home','pending','all','excessive','history','hours','admin'];
+  var tabs = ['home','pending','all','excessive','history','hours','backsheet','admin'];
   for (var i=0;i<tabs.length;i++) {
     document.getElementById('tab-'+tabs[i]).classList.remove('active');
     document.getElementById('content-'+tabs[i]).classList.remove('active');
@@ -1536,6 +1594,7 @@ function switchTab(tab) {
   if (tab==='excessive') renderExcessive();
   if (tab==='history') renderHistory();
   if (tab==='hours') renderHoursTable();
+  if (tab==='backsheet') renderBacksheet();
 }
 
 // ============================================================
@@ -2002,8 +2061,177 @@ function approveSelected() {
   alert('✅ Approved!\n\nEmployee: ' + s.employeeName + '\nStatus written to SharePoint. Power Automate will send a confirmation email if your notification flow is active.');
 }
 
+// ============================================================
+// BACKSHEET DATA — Coaches & Managers
+// ============================================================
+var DEFAULT_COACHES = [
+  { name: 'Rose Perez', email: 'rose@edgelinkinc.com' },
+  { name: 'Ambulai Sheku', email: 'ambulai@edgelinkinc.com' },
+  { name: 'Joel Montero', email: 'joel@edgelinkinc.com' },
+  { name: 'Manny Rivera', email: 'angel.rivera@edgelinkinc.com' },
+  { name: 'Mr. Watts', email: 'jameswatts@evolutionwireless.net' },
+  { name: 'Cheryl', email: 'cheryl@edgelinkinc.com' }
+];
+
+var DEFAULT_MANAGERS = [
+  { store:'RI-751BROAD', type:'1ME', name:'Keysha Bettencourt', phone:'802-692-8098', email:'Keysha.Betancourt@edgelinkinc.com' },
+  { store:'RI-BALD HILL', type:'2ME', name:'Allia Abodaher', phone:'401-390-6538', email:'Allia@edgelinkinc.com' },
+  { store:'RI-BROAD ST', type:'2ME', name:'TBD', phone:'', email:'' },
+  { store:'RI-BROADWAY', type:'1ME', name:'TBD', phone:'', email:'' },
+  { store:'CT-BUCKLAND HILLS MALL', type:'2ME', name:'Nereida Rodriquez', phone:'860-853-4430', email:'nereidarodriguez@edgelinkinc.com' },
+  { store:'MA-CAPE COD MALL', type:'2ME', name:'TBD', phone:'', email:'' },
+  { store:'MA-COGGESHALL', type:'2ME', name:'Napoleao Dacruz', phone:'239-895-2195', email:'Napoleao@edgelinkinc.com' },
+  { store:'AR-COLONEL GLENN', type:'1ME', name:'Karmina Mendoza', phone:'501-271-2937', email:'' },
+  { store:'RI-COVENTRY', type:'1ME', name:'Chris Paul Pierre', phone:'401-516-5533', email:'' },
+  { store:'RI-DOUGLAS', type:'1ME', name:'Chris Paul Pierre', phone:'401-516-5533', email:'Chris.Paul@edgelinkinc.com' },
+  { store:'RI-EAST PROVIDENCE', type:'2ME', name:'Saimary Hernandez', phone:'401-300-8671', email:'' },
+  { store:'MA-EXCHANGE ST.', type:'1ME', name:'Jazmine Heredia', phone:'413-459-5385', email:'Jazmine.Heredia@edgelinkinc.com' },
+  { store:'MA-FALLRIVER', type:'2ME', name:'TBD', phone:'', email:'' },
+  { store:'RI-HARTFORD AVE', type:'2ME', name:'Yanna Soriano', phone:'954-997-1416', email:'yanna.soriano@edgelinkinc.com' },
+  { store:'MA-HOLYOKE', type:'2ME', name:'Carlos Davila', phone:'774-578-3666', email:'Carlos.Davila@edgelinkinc.com' },
+  { store:'TN-KEITH ST', type:'1ME', name:'Marquesha Jones', phone:'865-338-6661', email:'' },
+  { store:'MA-KELLEY SQUARE', type:'2ME', name:'Alex Correa', phone:'774-823-7696', email:'Alex.Correa@edgelinkinc.com' },
+  { store:'MA-LOCUST STREET', type:'1ME', name:'Alicia Montero', phone:'917-488-5935', email:'Alicia.Montero@edgelinkinc.com' },
+  { store:'TN-MAGNOLIA', type:'2ME', name:'Mel Mcallister', phone:'270-363-7144', email:'mel@edgelinkinc.com' },
+  { store:'TN-MORRISTOWN', type:'1ME', name:'Franchesca Rader', phone:'865-422-4952', email:'' },
+  { store:'CT-NEW LONDON', type:'2ME', name:'Josh Landry', phone:'401-308-2460', email:'' },
+  { store:'RI-NEWPORT AVE', type:'1ME', name:'Saimary Hernandez', phone:'401-300-8671', email:'Saimary.Hernandez@edgelinkinc.com' },
+  { store:'TN-NORTH BROADWAY', type:'2ME', name:'Franchesca Rader', phone:'865-422-4952', email:'Franchesca.Rader@edgelinkinc.com' },
+  { store:'CT-NORWICH', type:'1ME', name:'Josh Landry', phone:'401-308-2460', email:'Josh.Landry@edgelinkinc.com' },
+  { store:'RI-PROVIDENCE PLACE MALL', type:'2ME', name:'TBD', phone:'', email:'' },
+  { store:'AR-RADIO GEYER', type:'2ME', name:'Karmina Mendoza', phone:'501-271-2937', email:'KarminaMendoza@edgelinkinc.com' },
+  { store:'RI-RESERVOIR AVE', type:'2ME', name:'Daniel Rosales', phone:'401-545-3080', email:'danielrosales@edgelinkinc.com' },
+  { store:'MA-ROCKDALE', type:'2ME', name:'Lori Ruiz', phone:'774-360-2754', email:'loriruiz@edgelinkinc.com' },
+  { store:'TN-SHALLOWFORD RD', type:'2ME', name:'Marquesha Jones', phone:'865-338-6661', email:'Marquesha.Jones@edgelinkinc.com' },
+  { store:'MA-SOUTH SHORE MALL', type:'2ME', name:'Amina Fellah', phone:'207-440-8400', email:'' },
+  { store:'MA-STATE STREET', type:'1ME', name:'Jessica Retamar', phone:'413-217-0596', email:'Jessica.Retamar@edgelinkinc.com' },
+  { store:'TN-WEST MARKET', type:'1ME', name:'Charisma Heggie', phone:'336-539-3083', email:'Charisma.Heggie@edgelinkinc.com' },
+  { store:'MA-WESTERN AVE', type:'2ME', name:'Amina Fellah', phone:'207-440-8400', email:'Amina.Fellah@edgelinkinc.com' },
+  { store:'TN-WESTERN AVE', type:'1ME', name:'TBD', phone:'', email:'' }
+];
+
+function getCoaches() {
+  var saved = localStorage.getItem('bs_coaches');
+  return saved ? JSON.parse(saved) : DEFAULT_COACHES.map(function(c){ return JSON.parse(JSON.stringify(c)); });
+}
+
+function getManagers() {
+  var saved = localStorage.getItem('bs_managers');
+  return saved ? JSON.parse(saved) : DEFAULT_MANAGERS.map(function(m){ return JSON.parse(JSON.stringify(m)); });
+}
+
+function saveBacksheet() {
+  // Save coaches
+  var coaches = [];
+  var coachRows = document.querySelectorAll('#coach-tbody tr');
+  for (var i=0;i<coachRows.length;i++) {
+    var inputs = coachRows[i].querySelectorAll('input');
+    coaches.push({ name: inputs[0].value.trim(), email: inputs[1].value.trim() });
+  }
+  localStorage.setItem('bs_coaches', JSON.stringify(coaches));
+
+  // Save managers
+  var managers = [];
+  var mgRows = document.querySelectorAll('#manager-tbody tr');
+  for (var j=0;j<mgRows.length;j++) {
+    var inps = mgRows[j].querySelectorAll('input');
+    var sel = mgRows[j].querySelector('select');
+    managers.push({
+      store: inps[0].value.trim(),
+      type: sel ? sel.value : '',
+      name: inps[1].value.trim(),
+      phone: inps[2].value.trim(),
+      email: inps[3].value.trim()
+    });
+  }
+  localStorage.setItem('bs_managers', JSON.stringify(managers));
+  alert('✅ Contacts saved!');
+}
+
+function renderBacksheet() {
+  var coaches = getCoaches();
+  var tbody = document.getElementById('coach-tbody');
+  tbody.innerHTML = '';
+  for (var i=0;i<coaches.length;i++) {
+    var c = coaches[i];
+    var tr = document.createElement('tr');
+    var hasEmail = c.email && c.email.length > 0;
+    tr.innerHTML =
+      '<td><input type="text" value="'+esc(c.name)+'"></td>'+
+      '<td><input type="email" value="'+esc(c.email)+'" placeholder="email@edgelinkinc.com"></td>'+
+      '<td><span class="bs-tag '+(hasEmail?'ok':'tbd')+'">'+(hasEmail?'✓ On File':'No Email')+'</span></td>';
+    tbody.appendChild(tr);
+  }
+
+  var managers = getManagers();
+  var mtbody = document.getElementById('manager-tbody');
+  mtbody.innerHTML = '';
+  for (var j=0;j<managers.length;j++) {
+    var m = managers[j];
+    var hasEmail2 = m.email && m.email.length > 0 && m.name !== 'TBD';
+    var tr2 = document.createElement('tr');
+    tr2.innerHTML =
+      '<td><input type="text" value="'+esc(m.store)+'" style="font-weight:700;min-width:140px;"></td>'+
+      '<td><select><option value="1ME"'+(m.type==='1ME'?' selected':'')+'>1ME</option><option value="2ME"'+(m.type==='2ME'?' selected':'')+'>2ME</option></select></td>'+
+      '<td><input type="text" value="'+esc(m.name)+'" placeholder="Manager Name"></td>'+
+      '<td><input type="text" value="'+esc(m.phone)+'" placeholder="Phone"></td>'+
+      '<td><input type="email" value="'+esc(m.email)+'" placeholder="email@edgelinkinc.com"></td>'+
+      '<td><span class="bs-tag '+(hasEmail2?'ok':'tbd')+'">'+(hasEmail2?'✓ On File':'No Email')+'</span></td>';
+    mtbody.appendChild(tr2);
+  }
+}
+
+function populateDenyDropdowns(submission) {
+  var coaches = getCoaches();
+  var managers = getManagers();
+
+  // Coach dropdown
+  var coachSel = document.getElementById('deny-coach-select');
+  coachSel.innerHTML = '<option value="">— No Coach —</option>';
+  for (var i=0;i<coaches.length;i++) {
+    var c = coaches[i];
+    var opt = document.createElement('option');
+    opt.value = c.email;
+    opt.textContent = c.name + (c.email ? '' : ' (No email)');
+    if (!c.email) opt.disabled = true;
+    coachSel.appendChild(opt);
+  }
+  // Auto-select based on submission coach
+  if (submission && submission.coach) {
+    for (var j=0;j<coaches.length;j++) {
+      if (coaches[j].name === submission.coach) { coachSel.value = coaches[j].email; break; }
+    }
+  }
+
+  // Manager dropdown
+  var mgSel = document.getElementById('deny-manager-select');
+  mgSel.innerHTML = '<option value="">— No Manager —</option>';
+  for (var k=0;k<managers.length;k++) {
+    var m = managers[k];
+    var opt2 = document.createElement('option');
+    opt2.value = m.email;
+    opt2.textContent = m.store + ' — ' + m.name + (m.email ? '' : ' (No email)');
+    if (!m.email || m.name === 'TBD') opt2.disabled = true;
+    mgSel.appendChild(opt2);
+  }
+  // Auto-select based on submission location
+  if (submission && submission.location) {
+    var loc = submission.location.toUpperCase().trim();
+    for (var l=0;l<managers.length;l++) {
+      var storeName = managers[l].store.toUpperCase().trim();
+      if (loc.indexOf(storeName) >= 0 || storeName.indexOf(loc) >= 0) {
+        if (managers[l].email) { mgSel.value = managers[l].email; break; }
+      }
+    }
+  }
+}
+
+var COACH_EMAILS = {}; // kept for backward compat
+
 function openDenyModal() {
   document.getElementById('deny-reason').value = '';
+  var s = getById(state.selectedId);
+  populateDenyDropdowns(s);
   document.getElementById('deny-modal').classList.add('open');
 }
 
@@ -2014,20 +2242,22 @@ function closeDenyModal() {
 function confirmDeny() {
   var reason = document.getElementById('deny-reason').value.trim();
   if (!reason) { alert('Please enter a denial reason.'); return; }
+  var coachEmail = document.getElementById('deny-coach-select').value;
+  var managerEmail = document.getElementById('deny-manager-select').value;
   var s = getById(state.selectedId);
   if (!s) return;
   s.status = 'denied';
   s.denialReason = reason;
+  s.coachEmail = coachEmail;
+  s.managerEmail = managerEmail;
   s.actionedAt = new Date().toISOString();
   logHistory(s, 'denied', reason);
   saveToStorage();
   closeDenyModal();
   closeDetailPanel();
   renderAll();
-  updateSharePointStatus(s, function() {
-    // Power Automate denial email triggered by Status + DenialReason change in SharePoint
-  });
-  alert('❌ Denied & logged.\n\nEmployee: ' + s.employeeName + '\nEmail: ' + (s.employeeEmail||'N/A') + '\nReason: ' + reason + '\n\nStatus written to SharePoint. Power Automate will email the employee automatically if your denial flow is active.');
+  updateSharePointStatus(s, function() {});
+  alert('❌ Denied & logged.\n\nEmployee: ' + s.employeeName + '\nReason: ' + reason + '\nCoach: ' + (coachEmail||'None') + '\nManager: ' + (managerEmail||'None') + '\n\nPower Automate will send emails automatically.');
 }
 
 function logHistory(s, action, reason) {
@@ -2251,6 +2481,8 @@ function updateSharePointStatus(submission, callback) {
     '/lists/' + submission.spListId + '/items/' + submission.spId + '/fields';
   var body = { 'Status': cap(submission.status) };
   if (submission.denialReason) body['DenialReason'] = submission.denialReason;
+  if (submission.coachEmail) body['CoachEmail'] = submission.coachEmail;
+  if (submission.managerEmail) body['ManagerEmail'] = submission.managerEmail;
 
   fetch(url, {
     method: 'PATCH',
