@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edgelink | Time Adjustment Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&family=Bangers&family=Permanent+Marker&display=swap" rel="stylesheet">
 <script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
 <style>
   :root {
@@ -630,10 +630,283 @@
     margin-left: 8px;
   }
 
+  /* GRAFFITI HOME SCREEN */
+  @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Bangers&display=swap');
+
+  #content-home {
+    padding: 0;
+    margin: -28px -32px;
+  }
+
+  .home-hero {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 40%, #0d0d1a 100%);
+    min-height: 280px;
+    position: relative;
+    overflow: hidden;
+    padding: 40px 40px 60px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .home-hero-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+  }
+
+  .graffiti-text-bg {
+    position: absolute;
+    font-family: 'Bangers', cursive;
+    opacity: 0.04;
+    color: white;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .home-hero-content { position: relative; z-index: 2; }
+
+  .home-greeting {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 14px;
+    color: var(--magenta);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .home-title {
+    font-family: 'Bangers', cursive;
+    font-size: 72px;
+    line-height: 0.9;
+    color: white;
+    letter-spacing: 4px;
+    text-shadow: 4px 4px 0px var(--magenta), 8px 8px 0px rgba(226,0,116,0.3);
+  }
+
+  .home-title span { color: var(--magenta); }
+
+  .home-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* Spray paint splatter SVG decorations */
+  .splatter {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.15;
+  }
+
+  .home-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: -1px;
+  }
+
+  .home-stat {
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .home-stat:hover { transform: translateY(-3px); }
+  .home-stat:hover .home-stat-number { transform: scale(1.1); }
+
+  .home-stat-0 { background: linear-gradient(135deg, #E20074, #9b004f); }
+  .home-stat-1 { background: linear-gradient(135deg, #10b981, #065f46); }
+  .home-stat-2 { background: linear-gradient(135deg, #ef4444, #991b1b); }
+  .home-stat-3 { background: linear-gradient(135deg, #f59e0b, #92400e); }
+
+  .home-stat-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 8px;
+  }
+
+  .home-stat-number {
+    font-family: 'Bangers', cursive;
+    font-size: 64px;
+    color: white;
+    line-height: 1;
+    transition: transform 0.2s;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+  }
+
+  .home-stat-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .home-stat-icon {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    font-size: 48px;
+    opacity: 0.15;
+  }
+
+  .home-body {
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .home-section {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  .home-section-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .home-section-title {
+    font-family: 'Bangers', cursive;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--purple);
+  }
+
+  .home-section-title.red { color: var(--denied); }
+  .home-section-title.green { color: var(--approved); }
+  .home-section-title.warn { color: var(--warn); }
+
+  .home-see-all {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--magenta);
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .home-pending-list { padding: 8px 0; max-height: 280px; overflow-y: auto; }
+
+  .home-pending-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .home-pending-item:hover { background: #fdf2f8; }
+  .home-pending-item:last-child { border-bottom: none; }
+
+  .home-pending-name { font-weight: 700; font-size: 13px; }
+  .home-pending-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .home-pending-actions { display: flex; gap: 6px; }
+
+  .quick-approve {
+    background: var(--approved);
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+  }
+  .quick-approve:hover { transform: scale(1.2); }
+
+  .quick-deny {
+    background: var(--denied);
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+  }
+  .quick-deny:hover { transform: scale(1.2); }
+
+  .home-chart-wrap { padding: 20px; }
+
+  /* Coach breakdown bars */
+  .coach-bar-row { margin-bottom: 12px; }
+  .coach-bar-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .coach-bar-track { background: var(--border); border-radius: 20px; height: 10px; overflow: hidden; }
+  .coach-bar-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--magenta), var(--purple)); transition: width 1s cubic-bezier(.4,0,.2,1); }
+
+  .home-flag-list { padding: 8px 0; }
+  .home-flag-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .home-flag-item:last-child { border-bottom: none; }
+  .home-flag-count {
+    font-family: 'Bangers', cursive;
+    font-size: 32px;
+    color: var(--flag);
+    line-height: 1;
+  }
+
+  /* Quick search */
+  .home-search-wrap { padding: 16px 20px; }
+  .home-search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .home-search-input:focus { border-color: var(--magenta); }
+  .home-search-results { max-height: 200px; overflow-y: auto; }
+  .home-search-result {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .home-search-result:hover { background: #fdf2f8; }
+
+  /* Counter animation */
+  @keyframes countUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+  .home-stat-number { animation: countUp 0.5s ease forwards; }
+
   @media (max-width: 900px) {
-    .summary-row { grid-template-columns: repeat(2,1fr); }
-    .main { padding: 16px; }
-    .detail-panel { width: 100vw; }
+    .home-stats-row { grid-template-columns: repeat(2,1fr); }
+    .home-body { grid-template-columns: 1fr; }
+    .home-title { font-size: 48px; }
+    #content-home { margin: -16px; }
   }
 </style>
 </head>
@@ -661,7 +934,8 @@
   </div>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="switchTab('pending')" id="tab-pending">Pending <span class="badge" id="badge-pending">0</span></div>
+    <div class="nav-tab active" onclick="switchTab('home')" id="tab-home">🏠 Home</div>
+    <div class="nav-tab" onclick="switchTab('pending')" id="tab-pending">Pending <span class="badge" id="badge-pending">0</span></div>
     <div class="nav-tab" onclick="switchTab('all')" id="tab-all">All Submissions</div>
     <div class="nav-tab" onclick="switchTab('excessive')" id="tab-excessive">⚠️ Excessive <span class="badge warn" id="badge-excessive">0</span></div>
     <div class="nav-tab" onclick="switchTab('history')" id="tab-history">History</div>
@@ -671,17 +945,148 @@
 
   <div class="main">
 
-    <!-- SYNC BAR -->
-    <div class="sync-bar">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-status">Connected to SharePoint</span>
-      <span style="margin-left:auto;">
-        <button class="btn-export" onclick="refreshData()" style="padding:5px 12px;font-size:11px;">↻ Refresh</button>
-      </span>
+    <!-- HOME TAB -->
+    <div class="tab-content active" id="content-home">
+      <div class="home-hero">
+        <div class="home-hero-bg">
+          <!-- Background graffiti text -->
+          <div class="graffiti-text-bg" style="font-size:200px;top:-30px;left:-20px;">TIME</div>
+          <div class="graffiti-text-bg" style="font-size:150px;top:60px;right:-10px;">ADJ</div>
+          <div class="graffiti-text-bg" style="font-size:100px;bottom:-10px;left:200px;">EDGELINK</div>
+          <!-- Spray paint circles -->
+          <svg class="splatter" style="top:-40px;right:100px;width:300px;height:300px;" viewBox="0 0 300 300">
+            <circle cx="150" cy="150" r="120" fill="#E20074" opacity="0.6"/>
+            <circle cx="130" cy="130" r="80" fill="#ff0088" opacity="0.4"/>
+            <circle cx="170" cy="170" r="40" fill="white" opacity="0.1"/>
+            <circle cx="90" cy="200" r="20" fill="#E20074" opacity="0.8"/>
+            <circle cx="220" cy="80" r="15" fill="#E20074" opacity="0.5"/>
+            <circle cx="240" cy="200" r="8" fill="white" opacity="0.3"/>
+            <circle cx="60" cy="100" r="10" fill="#E20074" opacity="0.6"/>
+          </svg>
+          <svg class="splatter" style="bottom:-60px;left:300px;width:200px;height:200px;" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80" fill="#4A1B5C" opacity="0.8"/>
+            <circle cx="80" cy="80" r="50" fill="#6b2d8b" opacity="0.5"/>
+            <circle cx="130" cy="60" r="12" fill="#4A1B5C" opacity="0.7"/>
+            <circle cx="50" cy="150" r="8" fill="#4A1B5C" opacity="0.5"/>
+          </svg>
+          <!-- Star/asterisk graffiti shapes -->
+          <svg class="splatter" style="top:20px;left:400px;width:60px;height:60px;opacity:0.25;" viewBox="0 0 60 60">
+            <line x1="30" y1="0" x2="30" y2="60" stroke="#E20074" stroke-width="4"/>
+            <line x1="0" y1="30" x2="60" y2="30" stroke="#E20074" stroke-width="4"/>
+            <line x1="8" y1="8" x2="52" y2="52" stroke="#E20074" stroke-width="4"/>
+            <line x1="52" y1="8" x2="8" y2="52" stroke="#E20074" stroke-width="4"/>
+          </svg>
+        </div>
+        <div class="home-hero-content">
+          <div class="home-greeting">// Edgelink HR Dashboard //</div>
+          <div class="home-title">TIME<br><span>ADJUST</span></div>
+          <div class="home-subtitle" id="home-date-display">Loading...</div>
+        </div>
+      </div>
+
+      <!-- STAT TILES -->
+      <div class="home-stats-row">
+        <div class="home-stat home-stat-0" onclick="switchTab('pending')">
+          <div class="home-stat-label">Pending Review</div>
+          <div class="home-stat-number" id="h-sum-pending">0</div>
+          <div class="home-stat-sub">needs your attention</div>
+          <div class="home-stat-icon">⏳</div>
+        </div>
+        <div class="home-stat home-stat-1" onclick="switchTab('all')">
+          <div class="home-stat-label">Approved</div>
+          <div class="home-stat-number" id="h-sum-approved">0</div>
+          <div class="home-stat-sub">this period</div>
+          <div class="home-stat-icon">✅</div>
+        </div>
+        <div class="home-stat home-stat-2" onclick="switchTab('all')">
+          <div class="home-stat-label">Denied</div>
+          <div class="home-stat-number" id="h-sum-denied">0</div>
+          <div class="home-stat-sub">this period</div>
+          <div class="home-stat-icon">❌</div>
+        </div>
+        <div class="home-stat home-stat-3" onclick="switchTab('excessive')">
+          <div class="home-stat-label">⚠️ Flagged</div>
+          <div class="home-stat-number" id="h-sum-flagged">0</div>
+          <div class="home-stat-sub">over threshold</div>
+          <div class="home-stat-icon">🚨</div>
+        </div>
+      </div>
+
+      <!-- HOME BODY -->
+      <div class="home-body">
+
+        <!-- PENDING QUEUE -->
+        <div class="home-section">
+          <div class="home-section-header">
+            <div class="home-section-title red">🔥 PENDING QUEUE</div>
+            <span class="home-see-all" onclick="switchTab('pending')">See All →</span>
+          </div>
+          <div class="home-pending-list" id="home-pending-list">
+            <div class="empty-state" style="padding:30px;">
+              <div class="empty-icon">✅</div>
+              <p>All caught up!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK SEARCH -->
+        <div class="home-section">
+          <div class="home-section-header">
+            <div class="home-section-title">🔍 QUICK SEARCH</div>
+          </div>
+          <div class="home-search-wrap">
+            <input type="text" class="home-search-input" id="home-search-input" placeholder="Search employee name or NTID..." oninput="renderHomeSearch()">
+            <div class="home-search-results" id="home-search-results"></div>
+          </div>
+        </div>
+
+        <!-- COACH BREAKDOWN -->
+        <div class="home-section">
+          <div class="home-section-header">
+            <div class="home-section-title purple">📊 BY COACH</div>
+          </div>
+          <div class="home-chart-wrap" id="home-coach-chart"></div>
+        </div>
+
+        <!-- FLAGGED EMPLOYEES -->
+        <div class="home-section">
+          <div class="home-section-header">
+            <div class="home-section-title warn">⚠️ FLAGGED THIS WEEK</div>
+            <span class="home-see-all" onclick="switchTab('excessive')">See All →</span>
+          </div>
+          <div class="home-flag-list" id="home-flag-list">
+            <div class="empty-state" style="padding:30px;">
+              <div class="empty-icon">👍</div>
+              <p>No flags this week!</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SYNC BAR on home -->
+      <div class="sync-bar" style="padding: 0 32px 16px;">
+        <div class="sync-dot" id="sync-dot-home"></div>
+        <span id="sync-status-home">Not synced</span>
+        <span style="margin-left:auto;">
+          <button class="btn-export" onclick="refreshData()" style="padding:5px 12px;font-size:11px;">↻ Refresh</button>
+        </span>
+      </div>
     </div>
 
-    <!-- SUMMARY -->
-    <div class="summary-row">
+    <!-- SYNC BAR (other tabs) -->
+    <div id="main-sync-bar" style="display:none;">
+      <div class="sync-bar">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-status">Connected to SharePoint</span>
+        <span style="margin-left:auto;">
+          <button class="btn-export" onclick="refreshData()" style="padding:5px 12px;font-size:11px;">↻ Refresh</button>
+        </span>
+      </div>
+    </div>
+
+    <!-- SUMMARY (hidden - data shown on home tab) -->
+    <div class="summary-row" id="main-summary-row" style="display:none;">
       <div class="summary-card pending">
         <div class="summary-label">Pending Review</div>
         <div class="summary-value" id="sum-pending">0</div>
@@ -701,7 +1106,7 @@
     </div>
 
     <!-- PENDING TAB -->
-    <div class="tab-content active" id="content-pending">
+    <div class="tab-content" id="content-pending">
       <div class="section-header">
         <div class="section-title">Pending Requests</div>
       </div>
@@ -1107,13 +1512,16 @@ function doLogout() {
 // TAB SWITCHING
 // ============================================================
 function switchTab(tab) {
-  var tabs = ['pending','all','excessive','history','hours','admin'];
+  var tabs = ['home','pending','all','excessive','history','hours','admin'];
   for (var i=0;i<tabs.length;i++) {
     document.getElementById('tab-'+tabs[i]).classList.remove('active');
     document.getElementById('content-'+tabs[i]).classList.remove('active');
   }
   document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('content-'+tab).classList.add('active');
+  var syncBar = document.getElementById('main-sync-bar');
+  if (syncBar) syncBar.style.display = (tab === 'home') ? 'none' : 'block';
+  if (tab==='home') renderHome();
   if (tab==='pending') renderPendingTable();
   if (tab==='all') renderAllTable();
   if (tab==='excessive') renderExcessive();
@@ -1126,6 +1534,7 @@ function switchTab(tab) {
 // ============================================================
 function renderAll() {
   updateSummary();
+  renderHome();
   renderPendingTable();
   renderAllTable();
   renderExcessive();
@@ -1150,8 +1559,189 @@ function updateSummary() {
 }
 
 // ============================================================
-// PENDING TABLE
+// HOME TAB
 // ============================================================
+function renderHome() {
+  // Date display
+  var d = new Date();
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var el = document.getElementById('home-date-display');
+  if (el) el.textContent = days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+
+  // Stat counters with animation
+  var pending = 0, approved = 0, denied = 0;
+  for (var i=0;i<state.submissions.length;i++) {
+    var s = state.submissions[i].status;
+    if (s==='pending') pending++;
+    else if (s==='approved') approved++;
+    else if (s==='denied') denied++;
+  }
+  var flagged = getExcessiveReps().length;
+
+  animateCount('h-sum-pending', pending);
+  animateCount('h-sum-approved', approved);
+  animateCount('h-sum-denied', denied);
+  animateCount('h-sum-flagged', flagged);
+
+  // Sync status mirror
+  var sd = document.getElementById('sync-dot-home');
+  var ss = document.getElementById('sync-status-home');
+  var mainSs = document.getElementById('sync-status');
+  if (sd && ss && mainSs) {
+    ss.textContent = mainSs.textContent;
+  }
+
+  // Pending queue (top 5)
+  var pendingItems = state.submissions.filter(function(s){ return s.status==='pending'; }).slice(0,5);
+  var plist = document.getElementById('home-pending-list');
+  if (plist) {
+    if (!pendingItems.length) {
+      plist.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="empty-icon">✅</div><p>All caught up!</p></div>';
+    } else {
+      plist.innerHTML = '';
+      for (var j=0;j<pendingItems.length;j++) {
+        var item = pendingItems[j];
+        var div = document.createElement('div');
+        div.className = 'home-pending-item';
+        div.innerHTML =
+          '<div onclick="openDetail(\'' + item.id + '\')" style="flex:1;cursor:pointer;">'+
+            '<div class="home-pending-name">'+esc(item.employeeName)+'</div>'+
+            '<div class="home-pending-sub">'+esc(item.ntid)+' &nbsp;·&nbsp; '+esc(item.dateNeeded||'—')+'&nbsp;·&nbsp;'+esc(item.coach)+'</div>'+
+          '</div>'+
+          '<div class="home-pending-actions">'+
+            '<button class="quick-approve" title="Approve" onclick="quickApprove(\''+item.id+'\',event)">✓</button>'+
+            '<button class="quick-deny" title="Deny" onclick="quickDenyHome(\''+item.id+'\',event)">✕</button>'+
+          '</div>';
+        plist.appendChild(div);
+      }
+    }
+  }
+
+  // Coach breakdown
+  var coachMap = {};
+  for (var k=0;k<state.submissions.length;k++) {
+    var sub = state.submissions[k];
+    if (sub.status === 'pending') {
+      var c = sub.coach || 'Unknown';
+      coachMap[c] = (coachMap[c]||0)+1;
+    }
+  }
+  var coachChart = document.getElementById('home-coach-chart');
+  if (coachChart) {
+    var coaches = Object.keys(coachMap).sort(function(a,b){ return coachMap[b]-coachMap[a]; });
+    var maxVal = coaches.length ? coachMap[coaches[0]] : 1;
+    if (!coaches.length) {
+      coachChart.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">No pending submissions</div>';
+    } else {
+      coachChart.innerHTML = '';
+      for (var m=0;m<coaches.length;m++) {
+        var pct = Math.round((coachMap[coaches[m]]/maxVal)*100);
+        var row = document.createElement('div');
+        row.className = 'coach-bar-row';
+        row.innerHTML =
+          '<div class="coach-bar-label"><span>'+esc(coaches[m])+'</span><span>'+coachMap[coaches[m]]+'</span></div>'+
+          '<div class="coach-bar-track"><div class="coach-bar-fill" style="width:0%" data-pct="'+pct+'%"></div></div>';
+        coachChart.appendChild(row);
+      }
+      // Animate bars
+      setTimeout(function() {
+        var fills = coachChart.querySelectorAll('.coach-bar-fill');
+        for (var n=0;n<fills.length;n++) {
+          fills[n].style.width = fills[n].getAttribute('data-pct');
+        }
+      }, 100);
+    }
+  }
+
+  // Flagged list
+  var reps = getExcessiveReps();
+  var flist = document.getElementById('home-flag-list');
+  if (flist) {
+    if (!reps.length) {
+      flist.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="empty-icon">👍</div><p>No flags this week!</p></div>';
+    } else {
+      flist.innerHTML = '';
+      for (var r=0;r<Math.min(reps.length,4);r++) {
+        var rep = reps[r];
+        var fdiv = document.createElement('div');
+        fdiv.className = 'home-flag-item';
+        fdiv.innerHTML =
+          '<div>'+
+            '<div class="home-pending-name">'+esc(rep.name)+'</div>'+
+            '<div class="home-pending-sub">'+esc(rep.ntid)+' &nbsp;·&nbsp; Coach: '+esc(rep.coach)+'</div>'+
+          '</div>'+
+          '<div class="home-flag-count">'+rep.count+'x</div>';
+        flist.appendChild(fdiv);
+      }
+    }
+  }
+}
+
+function animateCount(id, target) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var start = 0;
+  var duration = 600;
+  var startTime = null;
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    var progress = Math.min((timestamp - startTime) / duration, 1);
+    var ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(ease * target);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function quickApprove(id, e) {
+  e.stopPropagation();
+  var s = getById(id);
+  if (!s) return;
+  s.status = 'approved';
+  s.actionedAt = new Date().toISOString();
+  logHistory(s, 'approved', null);
+  saveToStorage();
+  updateSharePointStatus(s, function(){});
+  renderAll();
+  renderHome();
+}
+
+function quickDenyHome(id, e) {
+  e.stopPropagation();
+  state.selectedId = id;
+  openDenyModal();
+}
+
+function renderHomeSearch() {
+  var q = (document.getElementById('home-search-input').value||'').toLowerCase().trim();
+  var results = document.getElementById('home-search-results');
+  if (!results) return;
+  if (!q || q.length < 2) { results.innerHTML = ''; return; }
+  var matches = state.submissions.filter(function(s) {
+    return s.employeeName.toLowerCase().indexOf(q)>=0 || s.ntid.toLowerCase().indexOf(q)>=0;
+  }).slice(0,8);
+  if (!matches.length) {
+    results.innerHTML = '<div style="padding:12px 20px;font-size:13px;color:var(--text-muted);">No results found</div>';
+    return;
+  }
+  results.innerHTML = '';
+  for (var i=0;i<matches.length;i++) {
+    var m = matches[i];
+    var div = document.createElement('div');
+    div.className = 'home-search-result';
+    div.onclick = (function(sub){ return function(){ openDetail(sub.id); }; })(m);
+    div.innerHTML =
+      '<div>'+
+        '<div style="font-weight:700;font-size:13px;">'+esc(m.employeeName)+'</div>'+
+        '<div style="font-size:11px;color:var(--text-muted);">'+esc(m.ntid)+' · '+esc(m.coach)+'</div>'+
+      '</div>'+
+      '<span class="status-badge '+m.status+'">'+cap(m.status)+'</span>';
+    results.appendChild(div);
+  }
+}
+
+
 function renderPendingTable() {
   var search = (document.getElementById('pending-search').value||'').toLowerCase();
   var coach = document.getElementById('pending-coach').value;
