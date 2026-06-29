@@ -1598,12 +1598,21 @@ function mergeSharePointItems(items, token, siteId, listId) {
     var ntid = (f['What_x0020_is_x0020_your_x0020_NTID'] || f.WhatisyourNTID || f.NTID || '').trim().toLowerCase();
     var coach = NTID_COACH[ntid] || 'Unknown';
 
+    // Try all possible encodings for Employee Full Name
+    var empName = f['Employee_x0020_Full_x0020_Name_x003a__x0020__x0028_First_x0020_and_x0020_Last_x0020_Name_x0029_'] ||
+                  f['EmployeeFullName'] ||
+                  f['Employee Full Name: (First and Last Name)'] || '';
+    // Use Title only if it's not an Excel serial number
+    if (!empName && f.Title && !/^\d{4,}/.test(String(f.Title).trim())) empName = f.Title;
+    // Skip rows that have no recognizable name
+    if (!empName) empName = f.Title || 'Unknown';
+
     return {
       id: 'sp_' + spId,
       spId: spId,
       spSiteId: siteId,
       spListId: listId,
-      employeeName: f['Employee_x0020_Full_x0020_Name_x003a__x0020__x0028_First_x0020_and_x0020_Last_x0020_Name_x0029_'] || f.EmployeeFullName || f.Title || '',
+      employeeName: empName,
       ntid: (f['What_x0020_is_x0020_your_x0020_NTID'] || f.NTID || '').trim(),
       employeeEmail: f['Employee_x0020_Email_x0020_Address_x0020__x0028_Employee_x0020_will_x0020_be_x0020_sent_x0020_an_x0020_email_x0020_if_x0020_there_x0020_is_x0020_a_x0020_d_x2026__x0029_'] || f.EmployeeEmailAddress || '',
       coach: coach,
