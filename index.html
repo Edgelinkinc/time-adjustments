@@ -1293,7 +1293,7 @@
 
     <!-- ADMIN TAB -->
     <div class="tab-content" id="content-admin">
-      <div class="msal-setup" id="setup-notice">
+      <div class="msal-setup" id="setup-notice" style="display:none;">
         <strong>⚙️ SharePoint Connection Required</strong>
         Enter your SharePoint / Azure AD settings below to connect live form data. Until configured, the dashboard runs on demo data.
       </div>
@@ -1429,7 +1429,11 @@ var state = {
   submissions: [],
   history: [],
   threshold: 2,
-  config: {},
+  config: {
+    clientId: 'fa7fee44-07c3-4f31-ab00-3b83f124e654',
+    siteUrl: 'https://evolutionwirelessinc.sharepoint.com/sites/Payroll2',
+    listName: 'Time Adjustment Form'
+  },
   selectedId: null
 };
 
@@ -1494,7 +1498,12 @@ function doLogin() {
   if (pin === ADMIN_PIN) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    loadFromStorage();
     renderAll();
+    // Auto-fetch from SharePoint on login
+    setTimeout(function() { refreshData(); }, 500);
+    // Auto-refresh every 5 minutes
+    setInterval(function() { refreshData(); }, 5 * 60 * 1000);
   } else {
     document.getElementById('login-error').style.display = 'block';
     document.getElementById('pin-input').value = '';
